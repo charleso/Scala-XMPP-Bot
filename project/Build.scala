@@ -15,11 +15,14 @@ object BuildSettings {
 
 object Resolvers {
   val akkaRepo = "Akka Repo" at "http://akka.io/repository"
+  val gfRepo = "Guiceyfruit Release Repo" at "http://guiceyfruit.googlecode.com/svn/repo/releases/"
 }
 
 object Dependencies {
+  val akka_version = "1.1.3"
   val xmpp = "jivesoftware" % "smack" % "3.1.0"
-  val akka_actor = "se.scalablesolutions.akka" % "akka-actor" % "1.1.3"
+  val akka_actor = "se.scalablesolutions.akka" % "akka-actor" % akka_version
+  val akka_spring = "se.scalablesolutions.akka" % "akka-spring" % akka_version
 }
 
 object BuildSetup extends Build {
@@ -28,11 +31,11 @@ object BuildSetup extends Build {
   import BuildSettings._
 
   val deps = Seq(
-    xmpp, akka_actor
+    xmpp, akka_actor, akka_spring
   )
 
   val res = Seq(
-    akkaRepo
+    akkaRepo, gfRepo
   )
 
   lazy val project = Project(
