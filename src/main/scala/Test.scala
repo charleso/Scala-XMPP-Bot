@@ -15,8 +15,9 @@ object Main{
     val actor = actorOf[MyActor].start()
     actor ! "test"
     actor ! "message"
-    Thread.sleep(1000)
 
+    println("Press any key to exit...")
+    System.in.read();
     Actor.registry.shutdownAll()
   }
 
