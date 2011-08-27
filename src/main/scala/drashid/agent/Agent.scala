@@ -15,7 +15,7 @@ class AgentManager(agents: ActorRef*) extends Actor {
   def receive = {
     case 'stop => stop()
     case CommandPattern(command, data) => delegate(Command(command, data, self))
-    case Answer(ans) => println(ans)
+    case Answer(Some(ans)) => println(ans)
     case _ =>
   }
 
@@ -52,6 +52,8 @@ object Main{
     val google = actorOf(Google())
     val manager = actorOf(new AgentManager(google)).start()
     manager ! "!google Lookup something I want to know about"
+
+    System.in.read()
     manager ! 'stop
   }
 
