@@ -8,7 +8,7 @@ case class Command(command: String, data: String, parent: ActorRef)
 case class Answer(ans: Option[String])
 
 class AgentManager(agents: ActorRef*) extends Actor {
-  agents.foreach( self.link(_))
+  agents.foreach( self.link(_) )
   agents.foreach( _.start() )
 
   val CommandPattern = """^!([^\s]+)\s+(.*)$""".r
