@@ -4,12 +4,18 @@ import scala.collection.JavaConversions._
 import akka.actor.Actor._
 import akka.actor.{ActorRef, Actor}
 
+/**
+ * Message Data Types
+ */
 case class Request(cmd: String, data: String, parent: ActorRef){
   val command = Command(cmd, data)
 }
 case class Command(command: String, data: String)
 case class Response(ans: Option[String])
 
+/**
+ *  Agent Supervisor
+ */
 class AgentManager(agents: ActorRef*) extends Actor {
   agents.foreach( self.link(_) )
   agents.foreach( _.start() )
@@ -18,7 +24,7 @@ class AgentManager(agents: ActorRef*) extends Actor {
   def receive = {
     case 'stop => stop()
     case CommandPattern(command, data) => delegate(Request(command, data, self))
-    case Response(Some(ans)) => println(ans)
+    case Response(Some(ans)) => println(ans) //TODO send message via XMPP
     case _ =>
   }
 
@@ -32,6 +38,9 @@ class AgentManager(agents: ActorRef*) extends Actor {
   }
 }
 
+/**
+ * Agent Base
+ */
 abstract class Agent extends Actor {
   def receive = {
     case req:Request => req.parent ! Response(handle.apply(req command))
