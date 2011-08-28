@@ -15,7 +15,7 @@ object BuildSettings {
 
 object Resolvers {
   val akkaRepo = "Akka Repo" at "http://akka.io/repository"
-  val gfRepo = "Guiceyfruit Release Repo" at "http://guiceyfruit.googlecode.com/svn/repo/releases/"
+  //val gfRepo = "Guiceyfruit Release Repo" at "http://guiceyfruit.googlecode.com/svn/repo/releases/"
 }
 
 object Dependencies {
@@ -36,7 +36,7 @@ object BuildSetup extends Build {
   )
 
   val res = Seq(
-    akkaRepo, gfRepo
+    akkaRepo//, gfRepo
   )
 
   lazy val project = Project(

@@ -23,7 +23,7 @@ class AgentManager(agents: ActorRef*) extends Actor {
   val CommandPattern = """^!([^\s]+)\s*(.*)$""".r
   def receive = {
     case 'stop => stop()
-    case CommandPattern(command, data) => delegate(Request(command, data, self))
+    case CommandPattern(command, data) => delegate(Request(command.toLowerCase(), data, self))
     case Response(Some(ans)) => println(ans) //TODO send message via XMPP
     case _ =>
   }
