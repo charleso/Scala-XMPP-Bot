@@ -2,7 +2,14 @@ package drashid.agent
 
 import dispatch.{url, Http}
 import util.matching.Regex.{Match}
-import akka.event.EventHandler
+import io.Source
+
+case class Greet() extends Agent{
+  def handle = {
+    case Command("greet", data) => Some("Hi.")
+    case _ => None
+  }
+}
 
 /**
  * Let Me Google That For You

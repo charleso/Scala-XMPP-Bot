@@ -20,7 +20,8 @@ object Resolvers {
 
 object Dependencies {
   val akka_version = "1.1.3"
-  val xmpp = "jivesoftware" % "smack" % "3.1.0"
+  val smack = "jivesoftware" % "smack" % "3.1.0"
+  val smackx = "jivesoftware" % "smackx" % "3.1.0"
   val akka_actor = "se.scalablesolutions.akka" % "akka-actor" % akka_version
   //val akka_spring = "se.scalablesolutions.akka" % "akka-spring" % akka_version
   val http = "net.databinder" %% "dispatch-http" % "0.8.5"
@@ -32,11 +33,11 @@ object BuildSetup extends Build {
   import BuildSettings._
 
   val deps = Seq(
-    xmpp, akka_actor, http
+    smack, smackx, akka_actor, http
   )
 
   val res = Seq(
-    akkaRepo//, gfRepo
+    akkaRepo
   )
 
   lazy val project = Project(

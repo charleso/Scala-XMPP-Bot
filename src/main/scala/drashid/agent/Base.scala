@@ -16,7 +16,7 @@ case class Response(ans: Option[String])
 /**
  *  Agent Supervisor
  */
-class AgentManager(agents: ActorRef*) extends Actor {
+abstract class AgentManager(agents: ActorRef*) extends Actor {
   agents.foreach( self.link(_) )
   agents.foreach( _.start() )
 
@@ -24,7 +24,7 @@ class AgentManager(agents: ActorRef*) extends Actor {
   def receive = {
     case 'stop => stop()
     case CommandPattern(command, data) => delegate(Request(command.toLowerCase(), data, self))
-    case Response(Some(ans)) => println(ans) //TODO send message via XMPP
+    case Response(Some(ans)) => process(ans)
     case _ =>
   }
 
@@ -33,9 +33,11 @@ class AgentManager(agents: ActorRef*) extends Actor {
     self.stop()
   }
 
-  def delegate(req: Request){
+  def delegate(req: Any){
     agents.foreach( _ ! req )
   }
+
+  def process(ans:String)
 }
 
 /**
@@ -55,10 +57,11 @@ object Main{
   def main(args: Array[String]){
     val google = actorOf(Google())
     val umbrella = actorOf(Umbrella())
-    val manager = actorOf(new AgentManager(umbrella, google)).start()
-    manager ! "!google Lookup something I want to know about"
-    manager ! "!umbrella"
+    val greet = actorOf(Greet())
+    val manager = actorOf(new XMPPManager(XMPPConfig.loadFrom("/Users/drashid/github/scalabot/src/main/resources/xmpp.conf"), umbrella, google, greet)).start()
+    manager ! "!greet"
 
+    println("Press any key to stop.")
     System.in.read()
     manager ! 'stop
   }
