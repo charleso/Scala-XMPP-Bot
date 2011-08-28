@@ -12,6 +12,7 @@ case class Request(cmd: String, data: String, parent: ActorRef){
 }
 case class Command(command: String, data: String)
 case class Response(ans: Option[String])
+case class FreeText(text:String, parent: ActorRef)
 
 /**
  *  Agent Supervisor
@@ -25,6 +26,7 @@ abstract class AgentManager(agents: ActorRef*) extends Actor {
     case 'stop => stop()
     case CommandPattern(command, data) => delegate(Request(command.toLowerCase(), data, self))
     case Response(Some(ans)) => process(ans)
+    case text:String => delegate(FreeText(text, self))
     case _ =>
   }
 
@@ -46,10 +48,11 @@ abstract class AgentManager(agents: ActorRef*) extends Actor {
 abstract class Agent extends Actor {
   def receive = {
     case req:Request => req.parent ! Response(handle.apply(req command))
+    case req:FreeText => req.parent ! Response(handle.apply(req text))
     case _ =>
   }
 
-  def handle: PartialFunction[Command, Option[String]]
+  def handle: PartialFunction[Any, Option[String]]
 }
 
 object Main{
@@ -58,6 +61,7 @@ object Main{
     val google = actorOf(Google())
     val umbrella = actorOf(Umbrella())
     val greet = actorOf(Greet())
+    //val parrot = actorOf(Parrot())
     val manager = actorOf(new XMPPManager(XMPPConfig.loadFrom("/Users/drashid/github/scalabot/src/main/resources/xmpp.conf"), umbrella, google, greet)).start()
     manager ! "!greet"
 
