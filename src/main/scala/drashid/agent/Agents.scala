@@ -10,13 +10,6 @@ case class Greet() extends Agent{
   }
 }
 
-case class Parrot() extends Agent{
-  def handle = {
-    case text:String => Some(text)
-    case _ => None
-  }
-}
-
 /**
  * Let Me Google That For You
  */
