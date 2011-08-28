@@ -2,7 +2,6 @@ package drashid.agent
 
 import dispatch.{url, Http}
 import util.matching.Regex.{Match}
-import io.Source
 
 case class Greet() extends Agent{
   def handle = {
