@@ -3,9 +3,12 @@ package drashid.agent
 import dispatch.{url, Http}
 import util.matching.Regex.{Match}
 
+/**
+ * Simple Greeting
+ */
 case class Greet() extends Agent{
   def handle = {
-    case Command("greet", data) => Some("Hi.")
+    case CommandData("greet", data) => Some("Hi.")
     case _ => None
   }
 }
@@ -15,7 +18,7 @@ case class Greet() extends Agent{
  */
 case class Google() extends Agent{
   def handle = {
-    case Command("google", data) => Some("http://lmgtfy.com/?q=" + normalize(data))
+    case CommandData("google", data) => Some("http://lmgtfy.com/?q=" + normalize(data))
     case _ => None
   }
   def normalize(data: String) = data.replaceAll(" ", "+")
@@ -26,7 +29,7 @@ case class Google() extends Agent{
  */
 case class Umbrella() extends Agent{
   def handle = {
-    case Command("umbrella", data) => find()
+    case CommandData("umbrella", data) => find()
     case _ => None
   }
 

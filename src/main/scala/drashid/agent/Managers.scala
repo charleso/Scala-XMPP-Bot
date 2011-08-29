@@ -1,7 +1,6 @@
 package drashid.agent
 
 import akka.actor.ActorRef
-import akka.event.EventHandler
 import org.jivesoftware.smack.packet.{Message, Presence}
 import org.jivesoftware.smack._
 import java.util.Properties
@@ -24,7 +23,6 @@ object XMPPConfig{
   }
 }
 
-import ServerConf._
 case class XMPPManager(config:XMPPConfig, agents:ActorRef*) extends AgentManager(agents: _*) with ChatManagerListener with MessageListener {
   //Setup
   val connection = new XMPPConnection(ServerConf.config(config.serverType))
@@ -51,7 +49,6 @@ case class XMPPManager(config:XMPPConfig, agents:ActorRef*) extends AgentManager
   //Actor shutdown hook
   override def postStop(){
     connection.disconnect()
-    println("Connection Closed.")
   }
 }
 
