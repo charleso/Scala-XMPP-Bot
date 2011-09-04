@@ -1,10 +1,9 @@
 package drashid.agent
 
 import akka.actor.ActorRef
-import org.jivesoftware.smack.packet.{Message, Presence}
+import org.jivesoftware.smack.packet.{Message}
 import org.jivesoftware.smack._
 import scala.Console
-import java.lang.Character
 
 case class XMPPManager(){
   var connection: XMPPConnection = null;
@@ -28,7 +27,7 @@ case class XMPPManager(){
     println("Username: ")
     val username = read()
     println("Password: ")
-    val pass = readPassword()
+    val pass = read()
     println("Server (options: GTalk): ")
     val server = read()
     connection = login(username, pass, server)
@@ -38,25 +37,21 @@ case class XMPPManager(){
     return Console.readLine
   }
 
-  private def readPassword(): String = {
-    val pass = new jline.ConsoleReader().readLine(new Character('*'))
-    return new String(pass)
-  }
-
   def disconnect() {
     connection.disconnect()
   }
 
-  def setupChat(listener: MessageListener) {
+  def setupChat(listener: ChatManagerListener with MessageListener) {
+    connection.getChatManager.addChatListener(listener)
     println("Who do you want to chat to?")
     val person = read()
     val chat = connection.getChatManager.createChat(person, listener)
-    chat.sendMessage("test")
+    chat.sendMessage("Hi, I'm a bot.")
   }
 }
 
-case class ChatSink(chat:Chat, connection:XMPPConnection){
-  def output(ans: Any) = {
+case class ChatSink(chat:Chat, connection:XMPPConnection) extends Sink{
+  override def output(ans: Any) = {
     val msg = new Message(chat.getParticipant, Message.Type.chat)
     msg.setBody(ans.toString)
     connection.sendPacket(msg)

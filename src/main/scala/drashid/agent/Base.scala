@@ -20,6 +20,7 @@ abstract class AgentManager(agents: ActorRef*) extends Actor {
   def receive = {
     case 'stop => stop()
     case AgentResponse(Some(ans), sink) => sink.output(ans)
+    case AgentResponse(None, _) => //pass
     case (data, sink: Sink) => delegate(AgentRequest(MessageData(data), self, sink))
     case data => delegate(AgentRequest(MessageData(data), self, defaultSink))
   }
@@ -73,6 +74,6 @@ abstract class CommandAgent extends Agent {
   override def receive = {
     case AgentRequest(MessageData(CommandPattern(command, commandData)), parent, sink) =>
       parent ! AgentResponse(handle.apply(CommandData(command.toLowerCase(), commandData)), sink)
-    case x => super.receive(x)
+    case x => super.receive.apply(x)
   }
 }
