@@ -6,7 +6,7 @@ import util.matching.Regex.{Match}
 /**
  * Simple Greeting
  */
-case class Greet() extends Agent{
+case class Greet() extends CommandAgent {
   def handle = {
     case CommandData("greet", data) => Some("Hi.")
     case _ => None
@@ -16,7 +16,7 @@ case class Greet() extends Agent{
 /**
  * Let Me Google That For You
  */
-case class Google() extends Agent{
+case class Google() extends CommandAgent {
   def handle = {
     case CommandData("google", data) => Some("http://lmgtfy.com/?q=" + normalize(data))
     case _ => None
@@ -27,7 +27,7 @@ case class Google() extends Agent{
 /**
  * UmbrellaToday.com (NYC only)
  */
-case class Umbrella() extends Agent{
+case class Umbrella() extends CommandAgent {
   def handle = {
     case CommandData("umbrella", data) => find()
     case _ => None

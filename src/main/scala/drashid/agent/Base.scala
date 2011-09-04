@@ -1,20 +1,14 @@
 package drashid.agent
 
 import scala.collection.JavaConversions._
-import akka.actor.Actor._
 import akka.actor.{ActorRef, Actor}
 
 /**
  * Data Exchange Classes
  */
-trait Sender{
-  val parent:ActorRef;
-}
-case class AgentRequest(data:Any, override val parent: ActorRef) extends Sender
-case class AgentResponse(ans: Option[String])
-
-case class CommandData(command: String, data: String)
-case class FreeTextData(text:String)
+case class AgentRequest(data:Any, parent: ActorRef, requester:Sink)
+case class AgentResponse(ans: Option[Any], requester:Sink)
+case class MessageData(data:Any)
 
 /**
  *  Agent Supervisor
@@ -23,13 +17,11 @@ abstract class AgentManager(agents: ActorRef*) extends Actor {
   agents.foreach( self.link(_) )
   agents.foreach( _.start() )
 
-  val CommandPattern = """^!([^\s]+)\s*(.*)$""".r
   def receive = {
     case 'stop => stop()
-    case CommandPattern(command, commandData) => delegate(AgentRequest(CommandData(command.toLowerCase(), commandData), self))
-    case text:String => delegate(AgentRequest(FreeTextData(text), self))
-    case AgentResponse(Some(ans)) => process(ans)
-    case _ =>
+    case AgentResponse(Some(ans), sink) => sink.output(ans)
+    case (data, sink: Sink) => delegate(AgentRequest(MessageData(data), self, sink))
+    case data => delegate(AgentRequest(MessageData(data), self, defaultSink))
   }
 
   def stop(){
@@ -41,7 +33,20 @@ abstract class AgentManager(agents: ActorRef*) extends Actor {
     agents.foreach( _ ! req )
   }
 
-  def process(ans:String)
+  def defaultSink(): Sink = ConsoleSink()
+
+}
+
+/**
+ * Output Sinks
+ */
+trait Sink{
+  def output(answer: Any)
+}
+case class ConsoleSink() extends Sink{
+  def output(ans: Any) = {
+    println( ans )
+  }
 }
 
 /**
@@ -49,9 +54,25 @@ abstract class AgentManager(agents: ActorRef*) extends Actor {
  */
 abstract class Agent extends Actor {
   def receive = {
-    case req:AgentRequest => req.parent ! AgentResponse(handle.apply(req data))
+    case AgentRequest(data, parent, sink) => parent ! AgentResponse(handle.apply(data), sink)
     case _ =>
   }
 
-  def handle: PartialFunction[Any, Option[String]]
+  def handle: PartialFunction[Any, Option[Any]]
+}
+
+/**
+ * Agent Base that additionally pre-parses messages that follow the pattern:
+ *   !COMMAND EXTRA STUFF HERE
+ *   Example: !google something I want to know about
+ */
+case class CommandData(command: String, data: String)
+
+abstract class CommandAgent extends Agent {
+  val CommandPattern = """^!([^\s]+)\s*(.*)$""".r
+  override def receive = {
+    case AgentRequest(MessageData(CommandPattern(command, commandData)), parent, sink) =>
+      parent ! AgentResponse(handle.apply(CommandData(command.toLowerCase(), commandData)), sink)
+    case x => super.receive(x)
+  }
 }

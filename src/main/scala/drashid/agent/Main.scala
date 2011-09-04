@@ -15,8 +15,8 @@ object Main{
     val google = actorOf(Google())
     val umbrella = actorOf(Umbrella())
     val greet = actorOf(Greet())
-    val manager = actorOf(new XMPPManager(XMPPConfig.loadFrom(xmppConf), umbrella, google, greet)).start()
-    manager ! "!greet"
+    val manager = actorOf(new XMPPAgentManager(umbrella, google, greet)).start()
+    //manager ! "!greet"
 
     println("Press any key to stop.")
     System.in.read()

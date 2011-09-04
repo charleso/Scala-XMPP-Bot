@@ -25,6 +25,7 @@ object Dependencies {
   val akka_actor = "se.scalablesolutions.akka" % "akka-actor" % akka_version
   //val akka_spring = "se.scalablesolutions.akka" % "akka-spring" % akka_version
   val http = "net.databinder" %% "dispatch-http" % "0.8.5"
+  val jline = "jline" % "jline" % "0.9.94"
 }
 
 object BuildSetup extends Build {
@@ -33,7 +34,7 @@ object BuildSetup extends Build {
   import BuildSettings._
 
   val deps = Seq(
-    smack, smackx, akka_actor, http
+    smack, smackx, akka_actor, http, jline
   )
 
   val res = Seq(
