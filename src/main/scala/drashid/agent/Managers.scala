@@ -27,7 +27,7 @@ case class XMPPManager(){
     println("Username: ")
     val username = read()
     println("Password: ")
-    val pass = read()
+    val pass = read()  //TODO: password masking on CL
     println("Server (options: GTalk): ")
     val server = read()
     connection = login(username, pass, server)
@@ -41,6 +41,7 @@ case class XMPPManager(){
     connection.disconnect()
   }
 
+  //TODO: group chat option
   def setupChat(listener: ChatManagerListener with MessageListener) {
     connection.getChatManager.addChatListener(listener)
     println("Who do you want to chat to?")
@@ -62,6 +63,8 @@ case class XMPPAgentManager(agents:ActorRef*) extends AgentManager(agents: _*) w
   val connectionManager = XMPPManager()
   //Setup Connection
   connectionManager.setup()
+  //Start Chat
+  connectionManager.setupChat(this)
 
   //Listen & Forward Messages
   override def chatCreated(chat:Chat, locally:Boolean){
@@ -71,13 +74,10 @@ case class XMPPAgentManager(agents:ActorRef*) extends AgentManager(agents: _*) w
     self ! (message.getBody, ChatSink(chat, connectionManager.connection))
   }
 
-  //Start Chat
-  connectionManager.setupChat(this)
-
   //Actor shutdown hook
   override def postStop(){
     connectionManager.disconnect()
-    println("Disconnected")
+    println("Disconnected.")
   }
 }
 

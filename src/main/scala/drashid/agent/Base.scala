@@ -55,8 +55,14 @@ case class ConsoleSink() extends Sink{
  */
 abstract class Agent extends Actor {
   def receive = {
-    case AgentRequest(data, parent, sink) => parent ! AgentResponse(handle.apply(data), sink)
+    case AgentRequest(data, parent, sink) => send(AgentResponse(handle.apply(data), sink), parent)
     case _ =>
+  }
+
+  def send(message:AgentResponse, parent:ActorRef) { message match {
+      case AgentResponse(None, _) => //filter unanswered responses
+      case answer => parent ! answer
+    }
   }
 
   def handle: PartialFunction[Any, Option[Any]]
