@@ -4,7 +4,7 @@ import Keys._
 object BuildSettings {
   val buildOrganization = "com.drashid"
   val buildVersion      = "2.0.29"
-  val buildScalaVersion = "2.9.0"
+  val buildScalaVersion = "2.9.1"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
