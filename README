@@ -1,1 +1,11 @@
-A chat bot framework written in Scala.  It is not intended for any meaningful usage, only for my personal entertainment, but feel free to try it.
+A chat bot framework written in Scala.
+
+Now supports:
+
+    scalex - http://scalex.org/
+    ls     - http://ls.implicit.ly/
+    scala  - REPL mode
+
+To run:
+
+    sbt "run user password server nick room"
