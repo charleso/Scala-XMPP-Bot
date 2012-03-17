@@ -14,7 +14,7 @@ object BuildSettings {
 }
 
 object Resolvers {
-  val akkaRepo = "Akka Repo" at "http://akka.io/repository"
+  val akkaRepo = "Akka Repo" at "http://repo.akka.io/releases"
   //val gfRepo = "Guiceyfruit Release Repo" at "http://guiceyfruit.googlecode.com/svn/repo/releases/"
 }
 
