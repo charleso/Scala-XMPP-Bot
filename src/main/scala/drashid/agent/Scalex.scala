@@ -25,18 +25,18 @@ object Scalex {
       JField("valueParams", JString(vparams)) <- res
     } yield {
       val txt = (r \ "comment" \ "short" \ "txt") match {
-        case JString(txt) => txt
-        case _ => ""
+        case JString(txt) => Some(txt)
+        case _ => None
       }
       Result(pname, ptparams, name, tparams, vparams, rtype, txt)
     }
 
   }
 
-  case class Result(pname: String, ptparams: String, name: String, tparams: String, vparams: String, rtype: String, txt: String) {
+  case class Result(pname: String, ptparams: String, name: String, tparams: String, vparams: String, rtype: String, txt: Option[String]) {
     def toStringShort =  pname + ptparams + " " + name + tparams + ": " + vparams + ": " + rtype
 
-    def toStringFull = toStringShort + "\n" + txt
+    def toStringFull = toStringShort + txt.map("\n" + _).getOrElse("")
   }
 
 }
