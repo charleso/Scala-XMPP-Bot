@@ -12,7 +12,7 @@ object Scalex {
     for {
       JObject(obj) <- JsonParser.parse(source)
       JField("results", JArray(arr)) <- obj
-      JObject(res) <- arr
+      r@JObject(res) <- arr
       JField("resultType", JString(rtype)) <- res
 
       JField("parent", JObject(parent)) <- res
@@ -22,12 +22,14 @@ object Scalex {
       JField("name", JString(name)) <- res
       JField("typeParams", JString(tparams)) <- res
 
-      JField("comment", JObject(comment)) <- res
-      JField("short", JObject(short)) <- comment
-      JField("txt", JString(txt)) <- short
-
       JField("valueParams", JString(vparams)) <- res
-    } yield Result(pname, ptparams, name, tparams, vparams, rtype, txt)
+    } yield {
+      val txt = (r \ "comment" \ "short" \ "txt") match {
+        case JString(txt) => txt
+        case _ => ""
+      }
+      Result(pname, ptparams, name, tparams, vparams, rtype, txt)
+    }
 
   }
 
