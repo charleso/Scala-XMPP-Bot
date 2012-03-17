@@ -76,7 +76,7 @@ abstract class Agent extends Actor {
 case class CommandData(command: String, data: String)
 
 abstract class CommandAgent extends Agent {
-  val CommandPattern = """^!([^\s]+)\s*(.*)$""".r
+  val CommandPattern = """(?s)^!([^\s]+)\s*(.*)$""".r
   override def receive = {
     case AgentRequest(MessageData(CommandPattern(command, commandData)), parent, sink) =>
       parent ! AgentResponse(handle.apply(CommandData(command.toLowerCase(), commandData)), sink)
