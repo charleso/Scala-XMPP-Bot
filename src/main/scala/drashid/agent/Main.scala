@@ -8,15 +8,12 @@ import akka.actor.Actor._
 object Main{
 
   def main(args: Array[String]){
-    var xmppConf = "src/main/resources/xmpp.conf"
-    if(args.length >= 1){
-      xmppConf = args(0)
-    }
-    val google = actorOf(Google())
-    val umbrella = actorOf(Umbrella())
-    val greet = actorOf(Greet())
-    val manager = actorOf(new XMPPAgentManager(umbrella, google, greet)).start()
-    //manager ! "!greet"
+    val scalex = actorOf(Scalex())
+    val ls = actorOf(Ls())
+    val interpret = actorOf(Interpret())
+
+    implicit val config = new ArgsConfig(args)
+    val manager = actorOf(new XMPPAgentManager(scalex, ls, interpret)).start()
 
     println("Press any key to stop.")
     System.in.read()
