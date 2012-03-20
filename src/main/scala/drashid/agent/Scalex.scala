@@ -16,7 +16,7 @@ object Scalex {
       JField("resultType", JString(rtype)) <- res
 
       JField("parent", JObject(parent)) <- res
-      JField("name", JString(pname)) <- parent
+      JField("qualifiedName", JString(pname)) <- parent
       JField("typeParams", JString(ptparams)) <- parent
 
       JField("name", JString(name)) <- res
